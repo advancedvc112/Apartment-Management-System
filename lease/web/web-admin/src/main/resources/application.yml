@@ -19,6 +19,19 @@ spring:
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 
+  data:
+    redis:
+      host: 192.168.27.104
+      port: 6379
+      database: 0
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+
 #用于打印框架生成的sql语句，便于调试
 mybatis-plus:
   configuration:
@@ -33,4 +46,11 @@ minio:
 #打平处理
 springdoc:
   default-flat-param-object: true
+
+#验证
+admin:
+  auth:
+    path-patterns:
+      include: /admin/**
+      exclude: /admin/login/**
 
