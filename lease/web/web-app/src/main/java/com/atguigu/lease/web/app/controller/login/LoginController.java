@@ -33,7 +33,7 @@ public class LoginController {
     @Operation(summary = "登录")
     public Result<String> login(@RequestBody LoginVo loginVo) {
         String token = loginService.login(loginVo);
-        return Result.ok();
+        return Result.ok(token);
     }
 
     @GetMapping("info")

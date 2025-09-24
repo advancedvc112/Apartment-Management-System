@@ -16,7 +16,7 @@ import java.util.List;
 public interface LeaseAgreementMapper extends BaseMapper<LeaseAgreement> {
 
 
-    List<AgreementItemVo> lisAgreementItemByPhone(String phone);
+    List<AgreementItemVo> listAgreementItemByPhone(String phone);
 }
 
 

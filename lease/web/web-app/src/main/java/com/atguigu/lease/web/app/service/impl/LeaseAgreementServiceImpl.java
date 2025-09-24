@@ -43,7 +43,7 @@ public class LeaseAgreementServiceImpl extends ServiceImpl<LeaseAgreementMapper,
 
     @Override
     public List<AgreementItemVo> listAgreementItemByPhone(String phone) {
-        return leaseAgreementMapper.lisAgreementItemByPhone(phone);
+        return leaseAgreementMapper.listAgreementItemByPhone(phone);
     }
 
     @Override

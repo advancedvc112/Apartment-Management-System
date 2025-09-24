@@ -18,7 +18,7 @@
                  and room_id = #{id})
     </select>
 
-    <select id="selectListByApartmentId" resultType="com.atguigu.model.entity.FacilityInfo">
+    <select id="selectListByApartmentId" resultType="com.atguigu.lease.model.entity.FacilityInfo">
         select id,
                type,
                name,

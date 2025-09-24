@@ -1,5 +1,5 @@
 server:
-  port:8081
+  port: 8080
 
 spring:
   datasource:
@@ -15,6 +15,9 @@ spring:
       maximum-pool-size: 12 #连接池最大连接数，默认是10
       minimum-idle: 10 #最小空闲连接数量
       pool-name: SPHHikariPool # 连接池名称
+    jackson:
+      date-format: yyyy-MM-dd HH:mm:ss
+      time-zone: GMT+8
 
   data:
     redis:
@@ -36,10 +39,12 @@ mybatis-plus:
 springdoc:
   default-flat-param-object: true
 
+# Jackson日期格式配置
+
 aliyun:
   sms:
     access-key-id: ---
-    access-key-secret: ----
+    access-key-secret: ---
     endpoint: dysmsapi.aliyuncs.com
 
 app:

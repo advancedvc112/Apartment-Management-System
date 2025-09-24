@@ -16,7 +16,7 @@
     </resultMap>
 
     <!-- 根据条件查询房间列表 -->
-    <select id="pageRoomItemByQuery" resultMap="RoomItemVoMap">
+    <select id="pageRoomInfoByQuery" resultMap="RoomItemVoMap">
         select
         ri.id,
         ri.room_number,
@@ -38,8 +38,7 @@
         ai.phone,
         ai.is_release apart_is_release
         from room_info ri
-        left join apartment_info ai on ai.is_deleted=0
-        on ri.apartment_id=ai.id
+        left join apartment_info ai on ri.apartment_id=ai.id and ai.is_deleted=0
         <where>
             ri.is_deleted=0
             and ai.is_deleted=0

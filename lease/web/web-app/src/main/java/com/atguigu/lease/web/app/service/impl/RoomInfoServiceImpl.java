@@ -1,5 +1,6 @@
 package com.atguigu.lease.web.app.service.impl;
 
+import com.atguigu.lease.common.constant.RedisConstant;
 import com.atguigu.lease.common.context.LoginUserContext;
 import com.atguigu.lease.model.entity.*;
 import com.atguigu.lease.model.enums.ItemType;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -71,6 +73,9 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
     @Autowired
     private BrowsingHistoryService browsingHistoryService;
 
+    @Autowired
+    private RedisTemplate<String,Object> redisTemplate;
+
     @Override
     public IPage<RoomItemVo> pageRoomItemByQuery(Page<RoomItemVo> page, RoomQueryVo queryVo) {
         return roomInfoMapper.pageRoomInfoByQuery(page,queryVo);
@@ -79,58 +84,66 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
     @Override
     public RoomDetailVo getRoomDetailById(Long id) {
 
-        //查RoomInfo
-        RoomInfo roomInfo = roomInfoMapper.selectById(id);
-        if(roomInfo == null){
-            return null;
+        String key = RedisConstant.APP_ROOM_PREFIX + id;
+        RoomDetailVo roomDetailVo = (RoomDetailVo)redisTemplate.opsForValue().get(key);
+
+        if(roomDetailVo == null) {
+            //查RoomInfo
+            RoomInfo roomInfo = roomInfoMapper.selectById(id);
+            if (roomInfo == null) {
+                return null;
+            }
+
+            //查所属公寓信息
+            ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(roomInfo.getApartmentId());
+
+            //查图片
+            List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, id);
+
+            //查属性
+            List<AttrValueVo> attrValueVoList = attrValueMapper.selectListByRoomId(id);
+
+            //查配套
+            List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+
+            //查标签
+            List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+
+            //查可选支付
+            List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
+
+            //查可选租期
+            List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
+
+            //查房间杂费
+            List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
+
+            //查询房间入住状态
+            LambdaQueryWrapper<LeaseAgreement> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(LeaseAgreement::getRoomId, id);
+            queryWrapper.in(LeaseAgreement::getStatus, LeaseStatus.SIGNED, LeaseStatus.WITHDRAWING);
+            Long singedCount = leaseAgreementMapper.selectCount(queryWrapper);
+
+            RoomDetailVo appRoomDetailVo = new RoomDetailVo();
+            BeanUtils.copyProperties(roomInfo, appRoomDetailVo);
+            appRoomDetailVo.setIsDelete(roomInfo.getIsDeleted() == 1);
+            appRoomDetailVo.setIsCheckIn(singedCount > 0);
+
+            appRoomDetailVo.setApartmentItemVo(apartmentItemVo);
+            appRoomDetailVo.setGraphVoList(graphVoList);
+            appRoomDetailVo.setAttrValueVoList(attrValueVoList);
+            appRoomDetailVo.setFacilityInfoList(facilityInfoList);
+            appRoomDetailVo.setLabelInfoList(labelInfoList);
+            appRoomDetailVo.setPaymentTypeList(paymentTypeList);
+            appRoomDetailVo.setFeeValueVoList(feeValueVoList);
+            appRoomDetailVo.setLeaseTermList(leaseTermList);
+
+            redisTemplate.opsForValue().set(key, appRoomDetailVo);
         }
 
-        //查所属公寓信息
-        ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(roomInfo.getApartmentId());
-
-        //查图片
-        List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM,id);
-
-        //查属性
-        List<AttrValueVo> attrValueVoList = attrValueMapper.selectListByRoomId(id);
-
-        //查配套
-        List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
-
-        //查标签
-        List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
-
-        //查可选支付
-        List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
-
-        //查可选租期
-        List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
-
-        //查房间杂费
-        List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
-
-        //查询房间入住状态
-        LambdaQueryWrapper<LeaseAgreement> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(LeaseAgreement::getRoomId,id);
-        queryWrapper.in(LeaseAgreement::getStatus,LeaseStatus.SIGNED,LeaseStatus.WITHDRAWING);
-        Long singedCount = leaseAgreementMapper.selectCount(queryWrapper);
-
-        RoomDetailVo appRoomDetailVo = new RoomDetailVo();
-        BeanUtils.copyProperties(roomInfo, appRoomDetailVo);
-        appRoomDetailVo.setIsDelete(roomInfo.getIsDeleted() == 1);
-        appRoomDetailVo.setIsCheckIn(singedCount > 0);
-
-        appRoomDetailVo.setApartmentItemVo(apartmentItemVo);
-        appRoomDetailVo.setGraphVoList(graphVoList);
-        appRoomDetailVo.setAttrValueVoList(attrValueVoList);
-        appRoomDetailVo.setFacilityInfoList(facilityInfoList);
-        appRoomDetailVo.setLabelInfoList(labelInfoList);
-        appRoomDetailVo.setPaymentTypeList(paymentTypeList);
-        appRoomDetailVo.setFeeValueVoList(feeValueVoList);
-        appRoomDetailVo.setLeaseTermList(leaseTermList);
-
+        //保存浏览历史
         browsingHistoryService.saveHistory(LoginUserContext.getLoginUser().getUserId(), id);
-        return appRoomDetailVo;
+        return roomDetailVo;
     }
 
     @Override

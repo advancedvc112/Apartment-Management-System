@@ -88,7 +88,7 @@ public class ApartmentInfoServiceImpl extends ServiceImpl<ApartmentInfoMapper, A
         apartmentDetailVo.setLabelInfoList(labelInfoList);
         apartmentDetailVo.setMinRent(minRent);
         apartmentDetailVo.setFacilityInfoList(facilityInfoList);
-        apartmentDetailVo.setIsDelete(apartmentInfo.getIsDeleted() == 1);
+        apartmentDetailVo.setIsDelete(apartmentInfo.getIsDeleted() != null && apartmentInfo.getIsDeleted() == 1);
         return apartmentDetailVo;
     }
 

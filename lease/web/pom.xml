@@ -50,6 +50,12 @@
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
         </dependency>
+        
+        <!--Redis依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
     </dependencies>
     <!-- Spring Boot Maven插件，用于打包可执行的JAR文件 -->
     <build>

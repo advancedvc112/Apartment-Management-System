@@ -23,11 +23,11 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class LoginServiceImpl implements LoginService {
 
-    private final RedisTemplate<Object, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final SmsService smsService;
     private final UserInfoService userInfoService;
 
-    public LoginServiceImpl(RedisTemplate<Object, Object> redisTemplate, SmsService smsService, UserInfoService userInfoService) {
+    public LoginServiceImpl(RedisTemplate<String, Object> redisTemplate, SmsService smsService, UserInfoService userInfoService) {
         this.redisTemplate = redisTemplate;
         this.smsService = smsService;
         this.userInfoService = userInfoService;
@@ -61,7 +61,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String login(LoginVo loginVo) {
         //检查手机号是不是空
-        if(!StringUtils.isEmpty(loginVo.getPhone())){
+        if(StringUtils.isEmpty(loginVo.getPhone())){
             throw new LeaseException(ResultCodeEnum.APP_LOGIN_PHONE_EMPTY);
         }
         //检查验证码是不是空
