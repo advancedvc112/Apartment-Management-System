@@ -1,2 +1,6 @@
 # -apartment-
-基于尚硅谷尚庭公寓的小demo，选择这个项目来巩固我的ssm技术掌握，详见master分支
+基于尚硅谷尚庭公寓的小demo，选择这个项目来巩固我的ssm技术掌握，项目源码详见master分支。
+启动方式是找到app/admin包中的Application类进行启动，事先需要使用maven的clean+complite+install进行相关依赖装配+编译，最后再运行。
+移动端和后台端各有一个application.yml配置文件，你需要事先准备一部虚拟机（建议使用VMWare安装centos7），由于centos已经停止维护，其中的yum源失效，需要更改配置文件安装国内yum镜像源（aliyun/清华），然后使用yum安装gcc，然后再安装redis，mysql数据库，jdk17，这是环境准备。
+这个项目的主要技术栈是springboot+mybatisplus+springmvc，主要是后台管理系统和移动端的实现，除此之外，还用到redis作为缓存提高查询性能（至于为什么要用redis，一个是数据库表设计太过细分，往往一张表能够解决，但经过仔细的分表，一次往往查了5张表左右，这也是你在项目中能够看到许多mapper.xml文件的原因，因为多表连接联查的sql语句相当复杂，即使你能够使用mybatisplus的@select等注解去实现动态sql，但是复杂的映射关系，会让你看不懂代码，所以最终你能看到的就是许多配置文件），redis能够将数据都保存在内存中，查询更快，效率更高。期间还用了nginx反向代理，这是个很好接触这些技术的好机会。
+这个项目建议是学了linux操作系统+计算机网络+redis基础的来做，否则不太好理解。
