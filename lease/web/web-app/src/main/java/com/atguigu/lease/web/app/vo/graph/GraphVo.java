@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 
 @Data
 @Schema(description = "图片信息")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GraphVo {
+public class GraphVo implements Serializable {
 
 
     @Schema(description = "图片名称")

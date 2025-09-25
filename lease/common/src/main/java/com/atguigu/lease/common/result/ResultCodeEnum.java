@@ -38,6 +38,16 @@ public enum ResultCodeEnum {
     APP_LOGIN_CODE_ERROR(506, "验证码错误"),
     APP_ACCOUNT_DISABLED_ERROR(507, "该用户已被禁用"),
 
+    // 房间相关错误
+    ROOM_NOT_FOUND(701, "房间不存在"),
+    ROOM_APARTMENT_NOT_FOUND(702, "房间所属公寓不存在"),
+    ROOM_GRAPH_NOT_FOUND(703, "房间图片信息不存在"),
+    ROOM_ATTR_NOT_FOUND(704, "房间属性信息不存在"),
+    ROOM_FACILITY_NOT_FOUND(705, "房间配套信息不存在"),
+    ROOM_LABEL_NOT_FOUND(706, "房间标签信息不存在"),
+    ROOM_PAYMENT_NOT_FOUND(707, "房间支付方式不存在"),
+    ROOM_FEE_NOT_FOUND(708, "房间杂费信息不存在"),
+    ROOM_LEASE_TERM_NOT_FOUND(709, "房间租期信息不存在"),
 
     TOKEN_EXPIRED(601, "token过期"),
     TOKEN_INVALID(602, "token非法");

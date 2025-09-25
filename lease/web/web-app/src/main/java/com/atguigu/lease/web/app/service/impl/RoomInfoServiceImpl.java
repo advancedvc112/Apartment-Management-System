@@ -17,6 +17,8 @@ import com.atguigu.lease.web.app.vo.graph.GraphVo;
 import com.atguigu.lease.web.app.vo.room.RoomDetailVo;
 import com.atguigu.lease.web.app.vo.room.RoomItemVo;
 import com.atguigu.lease.web.app.vo.room.RoomQueryVo;
+import com.atguigu.lease.common.exception.LeaseException;
+import com.atguigu.lease.common.result.ResultCodeEnum;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -96,27 +98,51 @@ public class RoomInfoServiceImpl extends ServiceImpl<RoomInfoMapper, RoomInfo>
 
             //查所属公寓信息
             ApartmentItemVo apartmentItemVo = apartmentInfoService.selectApartmentItemVoById(roomInfo.getApartmentId());
+            if (apartmentItemVo == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_APARTMENT_NOT_FOUND);
+            }
 
             //查图片
             List<GraphVo> graphVoList = graphInfoMapper.selectListByItemTypeAndId(ItemType.ROOM, id);
+            if (graphVoList == null || graphVoList.isEmpty()) {
+                throw new LeaseException(ResultCodeEnum.ROOM_GRAPH_NOT_FOUND);
+            }
 
             //查属性
             List<AttrValueVo> attrValueVoList = attrValueMapper.selectListByRoomId(id);
+            if (attrValueVoList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_ATTR_NOT_FOUND);
+            }
 
             //查配套
             List<FacilityInfo> facilityInfoList = facilityInfoMapper.selectListByRoomId(id);
+            if (facilityInfoList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_FACILITY_NOT_FOUND);
+            }
 
             //查标签
             List<LabelInfo> labelInfoList = labelInfoMapper.selectListByRoomId(id);
+            if (labelInfoList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_LABEL_NOT_FOUND);
+            }
 
             //查可选支付
             List<PaymentType> paymentTypeList = paymentTypeMapper.selectListByRoomId(id);
+            if (paymentTypeList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_PAYMENT_NOT_FOUND);
+            }
 
             //查可选租期
             List<LeaseTerm> leaseTermList = leaseTermMapper.selectListByRoomId(id);
+            if (leaseTermList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_LEASE_TERM_NOT_FOUND);
+            }
 
             //查房间杂费
             List<FeeValueVo> feeValueVoList = feeValueMapper.selectListByApartmentId(id);
+            if (feeValueVoList == null) {
+                throw new LeaseException(ResultCodeEnum.ROOM_FEE_NOT_FOUND);
+            }
 
             //查询房间入住状态
             LambdaQueryWrapper<LeaseAgreement> queryWrapper = new LambdaQueryWrapper<>();
